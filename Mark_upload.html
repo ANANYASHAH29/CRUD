@@ -5,173 +5,173 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        *{
+        * {
             margin: 10px;
             padding: 0;
-            
         }
-        .container{
+        .container {
             text-align: center;
-            height: 100%;
         }
-        .create_form, .update_form{
-            display:none;
+        .create_form, .update_form {
+            display: none;
         }
-        .b1{
-            background-color: aquamarine;
+        .b1, .b2, .b3 {
             padding: 5px;
             border-radius: 8px;
-        }
-        .b2{
             background-color: aquamarine;
-            padding: 5px;
-            border-radius: 8px;
         }
-        .b3{
+        .b3 {
             background-color: rgb(53, 222, 109);
             padding: 10px;
-            border-radius: 8px;
             width: 90px;
         }
-        .tab {/*margin: auto center alignment, width,border-collapse:collapse to merge borders,*/
-            
+        .tab {
             margin: auto;
             width: 1000px;
             border-collapse: collapse;
         }
-        .tab thead{/* only background-color*/
+        .tab thead {
             background-color: aqua;
         }
-        .tab th{/*tex-align, padding, border*/
+        .tab th, .tab td {
             padding: 10px;
             border: solid black 3px;
         }
-        .edit{
+        .edit, .del {
             padding: 8px;
             border: solid black 2px;
             border-radius: 10px;
             font-size: 12px;
-            background-color: rgb(154, 170, 249);
         }
-        .del{
-            padding: 8px;
-            border: solid black 2px;
-            border-radius:10px;
-            font-size: 12px;
-            background-color: rgb(237, 99, 99);
-        }
+        .edit { background-color: rgb(154, 170, 249); }
+        .del { background-color: rgb(237, 99, 99); }
     </style>
 </head>
 <body onload="readAll()">
 
-    <div class="container">
+<div class="container">
     <div class="form_container">
-    <form class="create_form">
-        <input type="text" class="name" placeholder="Name">
-        <input type="text" class="reg" placeholder="Registeration No.">
-        <input type="number" class="num" placeholder="Mark">
-        <button type="button" class="b1" onclick="add()">Create</button>
-    </form>
-    <form class="update_form">
-        <input type="number" hidden class="id" >
-        <input type="text" class="tname" placeholder="Name">
-        <input type="text" class="treg" placeholder="Registeration No.">
-        <input type="number" class="tnum" placeholder="Mark">
-        <button type="button" class="b2" onclick="update()">Update</button>
-    </form>
-    <div class="adddata">
-        <button class="b3" onclick="create()"><strong>Add +</strong></button>
-    </div>
-    <table class="tab">
-        <thead>
-            <th>Name</th>
-            <th>Registeration Number</th>
-            <th>Mark</th>
-        </thead>
-        <tbody class="tab_body">
+        <form class="create_form">
+            <input type="text" class="name" placeholder="Name">
+            <input type="text" class="reg" placeholder="Registration No.">
+            <input type="number" class="num" placeholder="Mark">
+            <button type="button" class="b1" onclick="add()">Create</button>
+        </form>
 
-        </tbody>
-    </table>
+        <form class="update_form">
+            <input type="number" hidden class="id">
+            <input type="text" class="tname" placeholder="Name">
+            <input type="text" class="treg" placeholder="Registration No.">
+            <input type="number" class="tnum" placeholder="Mark">
+            <button type="button" class="b2" onclick="update()">Update</button>
+        </form>
+
+        <div class="adddata">
+            <button class="b3" onclick="create()"> <strong>Add +</strong></button>
+        </div>
+
+        <table class="tab">
+            <thead>
+                <th>Name</th>
+                <th>Registration Number</th>
+                <th>Mark</th>
+                <th>Actions</th>
+            </thead>
+            <tbody class="tab_body"></tbody>
+        </table>
+    </div>
 </div>
-</div>
+
 <script>
-    let data=[
-    {id: 1, name: "Ananya", reg: "23BCE0921", mark: "46" },
-    {id: 2, name: "Aarav", reg: "23BCE0584", mark: "42" }
-    ]
-    function readAll()
-    {
+    let data = JSON.parse(localStorage.getItem("object")) || [
+        { id: 1, name: "Ananya", reg: "23BCE0921", mark: "46" },
+        { id: 2, name: "Aarav", reg: "23BCE0584", mark: "42" }
+    ];
+
+    function readAll() {
         localStorage.setItem("object", JSON.stringify(data));
-        var tabledata=document.querySelector(".tab_body");
-        var object=localStorage.getItem("object");
-        var objectdata=JSON.parse(object);
-        var elements="";
-        objectdata.map(record =>(
-            elements+= `<tr>
+        let tabledata = document.querySelector(".tab_body");
+        let elements = "";
+
+        data.forEach(record => {
+            elements += `<tr>
                 <td>${record.name}</td>
                 <td>${record.reg}</td>
                 <td>${record.mark}</td>
                 <td>
-                    <button class="edit" onclick="{edit(${record.id})}">Edit</button>
-                    <button class="del" onclick="{delet(${record.id})}">Delete</button>
+                    <button class="edit" onclick="edit(${record.id})">Edit</button>
+                    <button class="del" onclick="delet(${record.id})">Delete</button>
                 </td>
-            </tr>`
-        ))
-        tabledata.innerHTML=elements;
-    }
-    function create()
-    {
-        document.querySelector(".create_form").style.display="block";
-        document.querySelector(".adddata").style.display="none";
-    }
-    function add()
-    {
-        var name=document.querySelector(".name").value;
-        var reg=document.querySelector(".reg").value;
-        var mark=document.querySelector(".num").value;
-        var object = JSON.parse(localStorage.getItem("object")) || [];
-    
-        // Generate a unique ID (last ID + 1)
-        var newId = object.length > 0 ? object[object.length - 1].id + 1 : 1;
-        
-        var newObj = { id: newId, name: name, reg: reg, mark: mark };
-        object.push(newObj);
+            </tr>`;
+        });
 
-        // Update localStorage with the new object
-        localStorage.setItem("object", JSON.stringify(object));
-    
-        // Update `data` as well
-        data = object;
-        document.querySelector(".create_form").style.display="none";
-        document.querySelector(".adddata").style.display="block";
+        tabledata.innerHTML = elements;
+    }
+
+    function create() {
+        document.querySelector(".create_form").style.display = "block";
+        document.querySelector(".adddata").style.display = "none";
+    }
+
+    function add() {
+        let name = document.querySelector(".name").value.trim();
+        let reg = document.querySelector(".reg").value.trim();
+        let mark = document.querySelector(".num").value.trim();
+
+        if (name === "" || reg === "" || mark === "") {
+            alert("Please fill all fields");
+            return;
+        }
+
+        let newId = data.length > 0 ? data[data.length - 1].id + 1 : 1;
+        data.push({ id: newId, name, reg, mark });
+
+        localStorage.setItem("object", JSON.stringify(data));
+
+        document.querySelector(".create_form").reset();
+        document.querySelector(".create_form").style.display = "none";
+        document.querySelector(".adddata").style.display = "block";
         readAll();
     }
-    function edit(id)
-    {
-        document.querySelector(".update_form").style.display="block";
-        var obj=data.find(record => record.id === id);
-        document.querySelector(".tname").value=obj.name;
-        document.querySelector(".treg").value=obj.reg;
-        document.querySelector(".tnum").value=obj.mark;
-        document.querySelector(".id").value=obj.id;
+
+    function edit(id) {
+        let obj = data.find(record => record.id === id);
+        if (!obj) return;
+
+        document.querySelector(".update_form").style.display = "block";
+        document.querySelector(".tname").value = obj.name;
+        document.querySelector(".treg").value = obj.reg;
+        document.querySelector(".tnum").value = obj.mark;
+        document.querySelector(".id").value = obj.id;
     }
-    function delet(id)
-    {
-        data=data.filter(record => record.id !==id);
+
+    function delet(id) {
+        data = data.filter(record => record.id !== id);
+        localStorage.setItem("object", JSON.stringify(data));
         readAll();
     }
-    function update()
-    {
-       var id= parseInt(document.querySelector(".id").value);
-       var name= document.querySelector(".tname").value;
-       var reg=document.querySelector(".treg").value;
-       var mark= document.querySelector(".tnum").value;
-       var idx=data.findIndex(record => record.id === id);
-       data[idx]={id,name,reg,mark};
-       document.querySelector(".update_form").style.display="none";
-       readAll();
+
+    function update() {
+        let id = parseInt(document.querySelector(".id").value);
+        let name = document.querySelector(".tname").value.trim();
+        let reg = document.querySelector(".treg").value.trim();
+        let mark = document.querySelector(".tnum").value.trim();
+
+        if (name === "" || reg === "" || mark === "") {
+            alert("Please fill all fields");
+            return;
+        }
+
+        let idx = data.findIndex(record => record.id === id);
+        if (idx !== -1) {
+            data[idx] = { id, name, reg, mark };
+            localStorage.setItem("object", JSON.stringify(data));
+        }
+
+        document.querySelector(".update_form").style.display = "none";
+        readAll();
     }
-    
 </script>
+
 </body>
 </html>
